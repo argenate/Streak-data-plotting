@@ -11,11 +11,10 @@ Recommended: lmfit, numdifftools
 Scripts:
 
   - The experiment.py file should be used first to fill the experiment.json file. This contains all the experimental parameters for each streak file.
-  - backsub_h5.py is used first to create the hdf5 file from the raw txt data and background files. 
+  - bksub_h5.py is used to create the hdf5 file from the raw txt data and background files. 
   - streak.py creates 3 simple plots: full energy and time traces, full spectra and full decays. 
   - spectra(t).py creates spectra at varying times of the trace.
-  - spectra(t)_fit.py fits spectra along time with a single gaussian. For testing purposes and finding fit parameters.
-  - spectra(t)_fit_multiple.py fits multiple gaussians to spectra along time. The fit parameters should already be known here.
+  - corr_spec and exp_irf_fit.py are modules used to correction spectra and to fit multiexponential equations respectively. 
 
 <br/>
 
