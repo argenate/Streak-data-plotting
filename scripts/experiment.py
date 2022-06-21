@@ -11,12 +11,12 @@ diction = {'sample': 'ds193',
            'temperatures': [4, 4, 4, 4, 50, 50, 50, 50, 200, 200, 200, 200, 300],
            'integration': [5, 5, 2, 10, 5, 15, 5, 10, 5, 15, 5, 10, 5]}
 
-with open('experiment.json', 'w', encoding='utf-8') as f:
+with open('data/experiment.json', 'w', encoding='utf-8') as f:
     json.dump(diction, f, ensure_ascii=False, indent=4)
 
 
 # Test import of file into string and list.
-with open('experiment.json', 'r', encoding='utf-8') as f:
+with open('data/experiment.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
     search = data['sample']
     names = data['names']
