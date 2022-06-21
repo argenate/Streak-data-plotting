@@ -13,7 +13,7 @@ import json
 
 
 # Import json with experiment parameters. You have to create the experiment json with experiment.py before running this.
-with open('experiment.json', 'r', encoding='utf-8') as f:
+with open('data/experiment.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
     search = data['sample']
     names = data['names']
@@ -46,8 +46,9 @@ to the data and substract the background.
 Many of the commented out lines are used for finding bugs. You may need these.
 """
 
-f = h5py.File(f"corr/{search}_cwl500_700ps_cor_spectra.hdf5", "w")
-t_l, t_u = input('Input the time indexes to look for the IRF (e.g 50 150):').split()
+f = h5py.File(f"data/{search}_cwl500_700ps_cor_spectra.hdf5", "w")
+# Should be from 100 to 350 but you might have to open up the range at first. You need to keep it small for high noise traces.
+t_l, t_u = input('Input the time indexes to look for the IRF (e.g 100 350):').split()
 
 for x in range(len(bks)):  # Can use just 1 for testing.
     data = np.loadtxt(str(datas[x]), skiprows=16)
