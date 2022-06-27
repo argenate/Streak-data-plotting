@@ -12,6 +12,31 @@ import h5py
 import json
 
 
+"""
+This script takes the raw experiment and background txt files from streak camera experiments and corrects them.
+The data is then exported into a hdf5 file.
+
+This should only be used with the picosecond/photoswitch experimental data. A separate file is for nanosecond data.
+
+The requires an experiment.json file to be in the folder. This is created using experiment.py.
+
+The script corrections are, in order:
+    Time and wavelength calibration
+    Background subtraction
+    Wavelength to electron-volt conversion
+    Shear correction
+    Finding time zero (t0)
+    Fix for integration time
+    Remove large spikes in the data.
+    
+Many of the commented out lines are used for finding bugs. You may need these.
+
+Ensure the script is run from the local experiment folder path (e.g. 220627).
+The folder names are based of this being the current directory.
+Assuming you are using vscode, use the right-click "Open with Code" option inside the folder.
+"""
+
+
 # Import json with experiment parameters. You have to create the experiment json with experiment.py before running this.
 with open('data/experiment.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
@@ -39,13 +64,6 @@ datas = files2[0::2]
 print(len(bks))
 print(len(datas))
 
-"""
-The following code is used to do various corrections
-to the data and substract the background.
-
-Many of the commented out lines are used for finding bugs. You may need these.
-"""
-
 f = h5py.File(f"data/{search}_cwl500_700ps_cor_spectra.hdf5", "w")
 # Should be from 100 to 350 but you might have to open up the range at first. You need to keep it small for high noise traces.
 t_l, t_u = input('Input the time indexes to look for the IRF (e.g 100 350):').split()
@@ -56,7 +74,7 @@ for x in range(len(bks)):  # Can use just 1 for testing.
     # print(data.shape)
     wavelength = data[1:, 0]
     intensity = data[1:, 1:]
-    # Photoswitch wavelength calibration. Double check this.
+    # Photoswitch wavelength calibration.
     wavelength = 675 - 0.152 * wavelength - 1.525 * 10**-5 * wavelength**2
     times = data[0, 1:]
     # Photoswitch time calibration
@@ -74,7 +92,8 @@ for x in range(len(bks)):  # Can use just 1 for testing.
     intensity = intensity[500:1700, 0:1450]
     # print(wavelength.shape, times.shape, intensity.shape)
     # print(np.max(intensity))
-
+    
+    # Ensure the background is equal to zero and change wavelength into ev.
     intensity -= np.mean(intensity[10:110, 10:110])
     average1 = np.mean(intensity)
     energy = 1239.88286 / wavelength  # nm2ev
@@ -123,7 +142,7 @@ for x in range(len(bks)):  # Can use just 1 for testing.
     ax1.set_xlabel('Time (ps)')
     fig2.savefig(f"raw/irf_{search}_{x}.png", dpi=200, facecolor='white', transparent=False)
 
-    # Find shift that keeps peak value closest to t0
+    # Find shift that keeps peak value closest to t0.
     n = 2
     time_mask = slice(0, 1800)
     energy_mask = slice(0, 2100)
@@ -155,7 +174,7 @@ for x in range(len(bks)):  # Can use just 1 for testing.
     inten_max = np.max(intensity[ev1:ev2, time1:time2])
     intensity /= inten_max
 
-    # Clip the intensity to a certain range to remove spikes. Doesn't include the 3.1eV IRF. Fix the maximum intensity.
+    # Clip the intensity to a certain range to remove spikes. Doesn't include the 3.1eV IRF. Then correct the maximum intensity.
     ev1 = (np.abs(energy - 2.0)).argmin()
     ev2 = (np.abs(energy - 3.0)).argmin()  # Will have to change this value for OPA pumped experiments.
     # print(np.max(intensity), np.min(intensity))
@@ -163,7 +182,7 @@ for x in range(len(bks)):  # Can use just 1 for testing.
     # print(np.max(intensity), np.min(intensity))
     intensity *= inten_max
 
-    # Slice the data to remove unnecessary areas.
+    # Temporarily slice the data to only correct necessary areas (i.e. do not correct the IRF).
     ev1 = (np.abs(energy - 2.0)).argmin()
     ev2 = (np.abs(energy - 3.4)).argmin()
     time1 = (np.abs(times + 50)).argmin()
@@ -173,7 +192,8 @@ for x in range(len(bks)):  # Can use just 1 for testing.
     times = times[time1:time2]
 
     print(f'{x:02d}' + '\n')
-
+    
+    # Plot the corrected data to ensure it looks good.
     norm = colors.SymLogNorm(linthresh=inten_max / 10, vmin=0, vmax=inten_max, base=10)
     fig3, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(12, 9))
     im = ax1.pcolormesh(times, energy, intensity, cmap='inferno', shading='auto', norm=norm)
