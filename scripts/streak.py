@@ -32,6 +32,15 @@ from lmfit.models import SkewedVoigtModel
 from lmfit.models import ExponentialModel, StepModel
 
 
+"""
+This script plots the traces, spectra and decays for each dataset. It should be the first analysis done.
+
+The energy and time values will likely have to be changed for each experiment.
+
+Also exports txt files for easy plotting later.
+"""
+
+
 matplotlib.rcParams.update({'font.size': 25})
 matplotlib.use('Agg')
 # %matplotlib qt
@@ -71,7 +80,7 @@ for i in range(len(names)):
 
 
 def batch_trace_plot(list_index):
-    """For batch plotting streak traces and also plotting summed decays and spectra on one plot."""
+    """For batch plotting streak traces, spectra, and decays."""
     intensity = traces[i]
     time = times[i]
     evs = energys[i]
@@ -105,6 +114,7 @@ def batch_trace_plot(list_index):
     time2 = (np.abs(time - 10)).argmin()
     print(np.max(inten[ev1:ev2, time1:time2]))
     inten /= np.max(inten[ev1:ev2, time1:time2])
+    # Median filter and added noise to make the plot look a bit cleaner.
     inten = ndimage.median_filter(inten, 5) + np.random.normal(0, 0.05, inten.shape)
 
     # Batch plot traces
@@ -152,7 +162,7 @@ def batch_trace_plot(list_index):
     fig5.savefig(f"decays/{search}_{label}_2.png", dpi=200, facecolor='white', transparent=False)
     plt.close('all')
 
-    if (i == 4 or i == 6):
+    if (i == 4 or i == 6):  # These should be the indexes for the high and low fluences for comparison.
         comp = spectrum
     else:
         comp = 0
@@ -166,7 +176,8 @@ for i in range(len(names)):
     # i=6
     compare[i], evs = batch_trace_plot(i)
 
-low_flu = compare[4] / np.max(compare[4]) * 0.8
+# Compare and subtract the high and low fluence.
+low_flu = compare[4] / np.max(compare[4]) * 0.8  # Multiply to get the correct intensity ratio.
 high_flu = compare[6] / np.max(compare[6])
 subtract = high_flu - low_flu
 subtract /= np.max(subtract)
