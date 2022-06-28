@@ -1,0 +1,9 @@
+name: streak
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - scipy
+  - pandas
+  - conda-forge::lmfit
+  - conda-forge::numdifftools
