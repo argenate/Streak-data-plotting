@@ -1,10 +1,12 @@
 # Streak-data-plotting
 Plotting and corrections for streak data from the PK Lab at McGill.<br/>
 
-Only tested on Windows.
+Only tested on Windows with Python 3.10.
 
 Requires:  numpy, pandas, scipy, matplotlib, h5py
-Recommended: lmfit, numdifftools
+Recommended: lmfit, numdifftools, jupyterlab
+
+Using "conda env create -f streak.yml" with the included yaml file will install most of the depedencies.
 
 scikit-image has a useful function called block_reduce. This can also be done manually with a custom function.
 
