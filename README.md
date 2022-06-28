@@ -3,8 +3,10 @@ Plotting and corrections for streak data from the PK Lab at McGill.<br/>
 
 Only tested on Windows.
 
-Requires:  numpy, pandas, scipy, matplotlib, scikit-image, h5py
+Requires:  numpy, pandas, scipy, matplotlib, h5py
 Recommended: lmfit, numdifftools
+
+scikit-image has a useful function called block_reduce. This can also be done manually with a custom function.
 
 <br/>
 
