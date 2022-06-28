@@ -7,7 +7,6 @@ from matplotlib import colors
 from pathlib import Path
 from scipy import ndimage
 from scipy.constants import c, h, e, nano
-from skimage.measure import block_reduce
 import h5py
 import json
 
