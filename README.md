@@ -1,6 +1,8 @@
 # Streak-data-plotting
 Plotting and corrections for streak data from the PK Lab at McGill.<br/>
 
+For the streak data GUI see: https://github.com/dstrande/sci-streak
+
 Only tested on Windows with Python 3.10.
 
 Requires:  numpy, pandas, scipy, matplotlib, h5py
